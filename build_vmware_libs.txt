@@ -1,0 +1,9 @@
+Install Windows 7
+Run updates (need IE 10)
+Install Visual Studio 2015 Enterprise
+Install support libraries
+	windows driver development kit
+	web services description language support (wsdl.exe)
+Download VMware SDK
+	6b9bc9c5fef0ee8a94b62e8128158b0e  VMware-vSphere-SDK-6.0.0-2561048.zip
+

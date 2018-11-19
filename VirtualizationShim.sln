@@ -1,0 +1,61 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.24720.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualizationShim", "VirtualizationShim\VirtualizationShim.csproj", "{6A01C483-026C-4C5A-8ED3-71912EB267AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestShim", "TestShim\TestShim.csproj", "{F315DCF5-2DB0-4F15-97DE-FB3F1A90794F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RavelloShim", "RavelloShim\RavelloShim.csproj", "{12D3C7E5-487D-42B3-8844-7A231C3D5284}"
+	ProjectSection(ProjectDependencies) = postProject
+		{6A01C483-026C-4C5A-8ED3-71912EB267AB} = {6A01C483-026C-4C5A-8ED3-71912EB267AB}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VMwareShim", "VMwareShim\VMwareShim.csproj", "{D6EB20E0-00E8-4D94-9BDD-0AD89234D8D2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KimchiShim", "KimchiShim\KimchiShim.csproj", "{6AD089EE-687B-4454-A798-2EC1D08A3BC2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VirtualBoxShim", "VirtualBoxShim\VirtualBoxShim.csproj", "{C51250D6-2CEA-46FE-A1DA-3149CDF919AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XenShim", "XenShim\XenShim.csproj", "{CCA4FE88-94FA-4892-BD24-387353D9C91A}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6A01C483-026C-4C5A-8ED3-71912EB267AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6A01C483-026C-4C5A-8ED3-71912EB267AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6A01C483-026C-4C5A-8ED3-71912EB267AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6A01C483-026C-4C5A-8ED3-71912EB267AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F315DCF5-2DB0-4F15-97DE-FB3F1A90794F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F315DCF5-2DB0-4F15-97DE-FB3F1A90794F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F315DCF5-2DB0-4F15-97DE-FB3F1A90794F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F315DCF5-2DB0-4F15-97DE-FB3F1A90794F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{12D3C7E5-487D-42B3-8844-7A231C3D5284}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{12D3C7E5-487D-42B3-8844-7A231C3D5284}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{12D3C7E5-487D-42B3-8844-7A231C3D5284}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{12D3C7E5-487D-42B3-8844-7A231C3D5284}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D6EB20E0-00E8-4D94-9BDD-0AD89234D8D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D6EB20E0-00E8-4D94-9BDD-0AD89234D8D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D6EB20E0-00E8-4D94-9BDD-0AD89234D8D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D6EB20E0-00E8-4D94-9BDD-0AD89234D8D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6AD089EE-687B-4454-A798-2EC1D08A3BC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6AD089EE-687B-4454-A798-2EC1D08A3BC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6AD089EE-687B-4454-A798-2EC1D08A3BC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6AD089EE-687B-4454-A798-2EC1D08A3BC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C51250D6-2CEA-46FE-A1DA-3149CDF919AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C51250D6-2CEA-46FE-A1DA-3149CDF919AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C51250D6-2CEA-46FE-A1DA-3149CDF919AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C51250D6-2CEA-46FE-A1DA-3149CDF919AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCA4FE88-94FA-4892-BD24-387353D9C91A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCA4FE88-94FA-4892-BD24-387353D9C91A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCA4FE88-94FA-4892-BD24-387353D9C91A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCA4FE88-94FA-4892-BD24-387353D9C91A}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

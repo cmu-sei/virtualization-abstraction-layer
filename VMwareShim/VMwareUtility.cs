@@ -1,0 +1,248 @@
+﻿using AppUtil;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Web.Services.Protocols;
+using Vim25Api;
+using VirtualizationShim;
+
+namespace VMwareShim
+{
+    public class VMwareUtility : VirtualMachineUtility
+    {
+        //HostConnectSpec hostConnectSpec;
+        AppUtil.AppUtil cb = null;
+
+
+        private string [] [] typeInfo = new string [] [] {
+              new string[] { "Folder", "name", "childEntity" }, };
+
+        public VMwareUtility( string username, string password, string hostname )
+        {
+            string [] args = { "--ignorecert", "--disablesso", "--username", username, "--url", hostname, "--password", password, "--typename", "VirtualMachine", "--propertyname", "name" };
+            cb = AppUtil.AppUtil.initialize( "Connect", constructOptions(), args );
+            cb.connect();
+
+            PrintInventory();
+
+            var serverTime = cb.getConnection().Service.CurrentTime( cb.getConnection().ServiceRef );
+            Console.WriteLine( "Got Server Time" );
+            Console.WriteLine( serverTime );
+
+        }
+
+        public void disconnect()
+        {
+            cb.disConnect();
+        }
+ 
+
+        public VirtualMachine findVirtualMachine( string vmName )
+        {
+            ManagedObjectReference vmmor = cb.getServiceUtil().GetDecendentMoRef( null, "VirtualMachine", vmName );
+            if( vmmor == null )
+            {
+                throw new VirtualizationShimException( "Unable to find virtual machine named : " + vmName + " in Inventory" );
+            }
+
+            return new VMWareVirtualMachine( vmmor, cb, vmName );
+        }
+
+        public List<VirtualMachine> listVirtualMachines()
+        {
+            List<VirtualMachine> vms = new List<VirtualMachine>();
+            List<string> vmNames = generateListOfVms();
+
+            foreach( string s in vmNames )
+                vms.Add( findVirtualMachine( s ) );
+
+            return vms;
+        }
+ 
+
+        private void BuildTypeInfo()
+        {
+            Console.WriteLine( "Inside BuildTypeInfo function." );
+            string usertype = cb.get_option( "typename" );
+            string property = cb.get_option( "propertyname" );
+            string [] typenprops = new string [2];
+            typenprops [0] = usertype;
+            typenprops [1] = property;
+            typeInfo =
+               new string [] [] { typenprops, };
+            Console.WriteLine( "Leaving BuildTypeInfo function..." );
+        }
+
+        public void PrintInventory()
+        {
+            try
+            {
+                Console.WriteLine( "Fetching Inventory" );
+                BuildTypeInfo();
+                // Retrieve Contents recursively starting at the root folder 
+                // and using the default property collector.            
+                ObjectContent [] ocary = cb.getServiceUtil().GetContentsRecursively( null, null, typeInfo, true );
+                ObjectContent oc = null;
+                ManagedObjectReference mor = null;
+                DynamicProperty [] pcary = null;
+                DynamicProperty pc = null;
+                for( int oci = 0; oci < ocary.Length; oci++ )
+                {
+                    oc = ocary [oci];
+                    mor = oc.obj;
+                    pcary = oc.propSet;
+                    cb.log.LogLine( "Object Type : " + mor.type );
+                    cb.log.LogLine( "Reference Value : " + mor.Value );
+                    if( pcary != null )
+                    {
+                        for( int pci = 0; pci < pcary.Length; pci++ )
+                        {
+                            pc = pcary [pci];
+                            cb.log.LogLine( "   Property Name : " + pc.name );
+                            if( pc != null )
+                            {
+                                if( !pc.val.GetType().IsArray )
+                                {
+                                    cb.log.LogLine( "   Property Value : " + pc.val );
+                                }
+                                else
+                                {
+                                    Array ipcary = (Array)pc.val;
+                                    cb.log.LogLine( "Val : " + pc.val );
+                                    for( int ii = 0; ii < ipcary.Length; ii++ )
+                                    {
+                                        object oval = ipcary.GetValue( ii );
+                                        if( oval.GetType().Name.IndexOf( "ManagedObjectReference" ) >= 0 )
+                                        {
+                                            ManagedObjectReference imor = (ManagedObjectReference)oval;
+                                            cb.log.LogLine( "Inner Object Type : " + imor.type );
+                                            cb.log.LogLine( "Inner Reference Value : " + imor.Value );
+                                        }
+                                        else
+                                        {
+                                            cb.log.LogLine( "Inner Property Value : " + oval );
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                cb.log.LogLine( "Done Printing Inventory" );
+                cb.log.LogLine( "Browser : Successful Getting Contents" );
+            }
+
+            catch( SoapException e )
+            {
+                Console.WriteLine( "Browser : Failed Getting Contents" );
+                Console.WriteLine( "Encountered SoapException" );
+                throw e;
+            }
+            catch( Exception e )
+            {
+                cb.log.LogLine( "Browser : Failed Getting Contents" );
+                throw e;
+            }
+
+        }
+        public static OptionSpec [] constructOptions()
+        {
+            OptionSpec [] useroptions = new OptionSpec [2];
+            useroptions [0] = new OptionSpec( "typename", "String", 1
+                                            , "Type of managed entity"
+                                            , null );
+            useroptions [1] = new OptionSpec( "propertyname", "String", 1
+                                            , "Name of the Property"
+                                            , null );
+            return useroptions;
+        }
+
+
+        private List<string> generateListOfVms()
+        {
+            List<string> vmList = new List<string>();
+            try
+            {
+                Console.WriteLine( "Generating inventory list..." );
+                BuildTypeInfo();
+                // Retrieve Contents recursively starting at the root folder 
+                // and using the default property collector.            
+                ObjectContent [] ocary = cb.getServiceUtil().GetContentsRecursively( null, null, typeInfo, true );
+                ObjectContent oc = null;
+                ManagedObjectReference mor = null;
+                DynamicProperty [] pcary = null;
+                DynamicProperty pc = null;
+                for( int oci = 0; oci < ocary.Length; oci++ )
+                {
+                    oc = ocary [oci];
+                    mor = oc.obj;
+                    pcary = oc.propSet;
+
+                    if( !mor.type.Equals( "VirtualMachine" ) )
+                        continue;
+
+                    cb.log.LogLine( "Object Type : " + mor.type );
+                    cb.log.LogLine( "Reference Value : " + mor.Value );
+                    if( pcary != null )
+                    {
+                        for( int pci = 0; pci < pcary.Length; pci++ )
+                        {
+                            pc = pcary [pci];
+                            if( !pc.name.Equals( "name" ) )
+                                continue;
+
+                            cb.log.LogLine( "   Property Name : " + pc.name );
+                            if( pc != null )
+                            {
+                                if( !pc.val.GetType().IsArray )
+                                {
+                                    vmList.Add( pc.val + "" );
+                                    cb.log.LogLine( "   Property Value : " + pc.val );
+                                }
+                                else
+                                {
+                                    Array ipcary = (Array)pc.val;
+                                    cb.log.LogLine( "Val : " + pc.val );
+                                    for( int ii = 0; ii < ipcary.Length; ii++ )
+                                    {
+                                        object oval = ipcary.GetValue( ii );
+                                        if( oval.GetType().Name.IndexOf( "ManagedObjectReference" ) >= 0 )
+                                        {
+                                            ManagedObjectReference imor = (ManagedObjectReference)oval;
+                                            cb.log.LogLine( "Inner Object Type : " + imor.type );
+                                            cb.log.LogLine( "Inner Reference Value : " + imor.Value );
+                                        }
+                                        else
+                                        {
+                                            cb.log.LogLine( "Inner Property Value : " + oval );
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                cb.log.LogLine( "Done Printing Inventory" );
+                cb.log.LogLine( "Browser : Successful Getting Contents" );
+            }
+
+            catch( SoapException e )
+            {
+                Console.WriteLine( "Browser : Failed Getting Contents" );
+                Console.WriteLine( "Encountered SoapException" );
+                throw e;
+            }
+            catch( Exception e )
+            {
+                cb.log.LogLine( "Browser : Failed Getting Contents" );
+                throw e;
+            }
+
+            return vmList;
+        }
+    }
+
+
+}
